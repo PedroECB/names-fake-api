@@ -1,39 +1,61 @@
 const faker = require('faker');
+const axios = require('axios');
+const { fake } = require('faker');
+const urlAPI = 'http://localhost:3000'
 
-function Person(name, date, email, city, cep, country){
+function Person(id, name, date, email, city, code, country){
     return {
+        id: id,
         name: name,
-        date: date,
+        birthDate: date,
         email: email,
         city: city,
-        cep: cep,
+        zipCode: code,
         country: country
     }
 }
 
+ function generateUsers(){
+    try{
+        for(let i= 0; i < 20; i++){
+            let person = new Person(
+                    faker.random.number(),
+                    faker.name.firstName(),
+                    faker.date.past().toLocaleDateString(),
+                    faker.internet.email(),
+                    faker.address.city(),
+                    faker.address.zipCode(),
+                    faker.address.country()
+                 )
 
-let pessoa = new Person(
-    'Pedro Henrique',
-    '09/06/1997',
-    'pedrosophbc@gmail.com',
-    'Salvador',
-    '41387-180',
-     'Brasil'
-)
+                postUser(person)
+         }
+    }catch(error){
+        console.log(error)
+    }
+}
 
-for(let i= 0; i < 10; i++){
-    console.log(new Person(
-            faker.name.firstName(),
-            faker.date.past().toLocaleDateString(),
-            faker.internet.email(),
-            faker.address.city(),
-            faker.address.zipCode(),
-            faker.address.country()
-        ))
+const postUser =  async function (p){
+    const result = await axios.post(`${urlAPI}/persons`, p)
+                 .then((response)=> {
+                     return response
+                     })
+                 .catch((error)=> {
+                     return error
+                    })
 }
 
 
-console.log(pessoa)
+ generateUsers()
+// .then((response)=>{
+//     console.log('Dados da api')
+//     axios.get(`${urlAPI}/persons`)
+//     .then((response)=>{
+//         console.log(response.data)
+
+//     }).catch((error)=>{
+//         console.log('Falha na matrix KJJKK')
+//     })
+// })
 
 
-// console.log(new Pessoa())
